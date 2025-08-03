@@ -1208,6 +1208,5 @@ In this comprehensive DevSecOps Kubernetes project, we successfully:
 Stay connected on LinkedIn: LinkedIn Profile
 Stay up-to-date with GitHub: GitHub Profile
 Feel free to reach out to me, if you have any other queries.
-Happy Coding!
-#   D e v S e c O p s - C I - C D - P i p l i n e - u s i n g - G i t h u b - A c t i o n s - a n d - A r g o C D - w i t h - m o n i t o r i n g  
+Happy Coding! 
  
