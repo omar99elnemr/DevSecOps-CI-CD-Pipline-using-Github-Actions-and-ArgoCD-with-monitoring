@@ -6,13 +6,6 @@
 
 This project demonstrates a complete DevSecOps pipeline for deploying a three-tier quiz application on AWS using Kubernetes (EKS), Terraform for infrastructure provisioning, and ArgoCD for GitOps. The project combines infrastructure as code with application deployment, security scanning, and comprehensive monitoring.
 
-## Video Tutorial
-
-For a comprehensive guide on deploying and managing cloud-native applications using AWS, Kubernetes, and DevSecOps tools, watch the detailed tutorial:
-
-
-Click on the image above to watch the video.
-
 ![diagram-gif](diagram.gif)
 
 ## Architecture Components
