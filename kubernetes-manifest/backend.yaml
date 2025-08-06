@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: ogochukwuozotta/backend-api:latest
+        image: omar99elnemr/backend-api:latest
         ports:
         - containerPort: 3000
         env:

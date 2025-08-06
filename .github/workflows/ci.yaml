@@ -1,10 +1,9 @@
 name: React.js CI
 
 on:
-  pull_request:
-    branches: "master"
+  workflow_dispatch:
 
-jobs:
+jobs: 
   frontend-test:
     runs-on: ubuntu-latest
     defaults:
@@ -41,7 +40,7 @@ jobs:
         uses: warchant/setup-sonar-scanner@v8
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarcloud-github-action@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -87,7 +86,7 @@ jobs:
         uses: warchant/setup-sonar-scanner@v8
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarcloud-github-action@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -109,15 +108,15 @@ jobs:
       run:
         working-directory: ./quiz-app
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@main
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
+        uses: snyk/actions/node@main
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           
       - name: Install Snyk CLI
-        uses: snyk/actions/setup@master
+        uses: snyk/actions/setup@main
         with:
           version: latest
         env:
@@ -137,15 +136,15 @@ jobs:
       run:
         working-directory: ./backend
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@main
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
+        uses: snyk/actions/node@main
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
          
       - name: Install Snyk CLI
-        uses: snyk/actions/setup@master
+        uses: snyk/actions/setup@main
         with:
           version: latest
         env:
@@ -176,7 +175,7 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/frontend-js    
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@main
       with:
         image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/frontend-js'
         format: 'sarif'
@@ -184,7 +183,7 @@ jobs:
         severity: 'CRITICAL,HIGH'
 
     - name: Install Snyk CLI
-      uses: snyk/actions/setup@master
+      uses: snyk/actions/setup@main
       with:
         snyk-token: ${{ secrets.SNYK_TOKEN }}
        
@@ -196,7 +195,7 @@ jobs:
       working-directory: ./quiz-app
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
-      uses: snyk/actions/docker@master
+      uses: snyk/actions/docker@main
       with:
         image: ${{ secrets.DOCKER_USERNAME }}/frontend-js
         args: --file=quiz-app/Dockerfile --severity-threshold=high
@@ -224,7 +223,7 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/backend-api    
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@main
       with:
         image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/backend-api'
         format: 'sarif'
@@ -232,7 +231,7 @@ jobs:
         severity: 'CRITICAL,HIGH' 
         
     - name: Install Snyk CLI
-      uses: snyk/actions/setup@master
+      uses: snyk/actions/setup@main
       with:
         snyk-token: ${{ secrets.SNYK_TOKEN }}
      
@@ -244,7 +243,7 @@ jobs:
       working-directory: ./backend
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
-      uses: snyk/actions/docker@master
+      uses: snyk/actions/docker@main
       with:
         image: ${{ secrets.DOCKER_USERNAME }}/backend-api
         args: --file=backend/Dockerfile --severity-threshold=high
@@ -259,7 +258,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Snyk to check Kubernetes manifest file for issues
-        uses: snyk/actions/iac@master
+        uses: snyk/actions/iac@main
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
