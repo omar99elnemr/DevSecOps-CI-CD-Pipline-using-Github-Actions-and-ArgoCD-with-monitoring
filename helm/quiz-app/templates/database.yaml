@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.database.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.database.name }}
+spec:
+  replicas: {{ .Values.database.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.database.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database.name }}
+    spec:
+      containers:
+      - name: {{ .Values.database.name }}
+        image: {{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.database.name }}-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.database.name }}-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.database.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.database.service.port }}
+      targetPort: 27017
+  type: {{ .Values.database.service.type }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.database.name }}-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.database.storage.size }}
