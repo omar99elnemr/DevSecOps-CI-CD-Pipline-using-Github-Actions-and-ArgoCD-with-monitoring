@@ -53,6 +53,62 @@ jobs:
       if: github.event.inputs.action == 'apply'
       run: terraform apply -auto-approve tfplan
 
+  cluster-status:
+    name: "Cluster Status"
+    needs: terraform
+    runs-on: ubuntu-latest
+    if: github.event.inputs.action == 'apply'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+
+    - name: Connect to EKS cluster
+      run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name quizapp-eks
+
+    - name: Show infrastructure status
+      run: |
+        echo "🏗️ INFRASTRUCTURE DEPLOYED SUCCESSFULLY"
+        echo "========================================"
+        echo ""
+        echo "📦 ECR Repositories:"
+        aws ecr describe-repositories --query 'repositories[*].repositoryName' --output table
+        echo ""
+        echo "🌐 EKS Cluster:"
+        kubectl get nodes
+        echo ""
+        echo "📂 Namespaces:"
+        kubectl get namespaces
+        echo ""
+        echo "🎛️ Load Balancer Controller:"
+        kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-load-balancer-controller
+        echo ""
+        echo "⚖️ Load Balancers:"
+        kubectl get svc --all-namespaces --field-selector spec.type=LoadBalancer
+        echo ""
+        echo "🔑 Access Commands:"
+        echo "aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name quizapp-eks"
+        echo ""
+        echo "📊 To access ArgoCD (default: admin/admin123):"
+        echo "kubectl get svc argocd-server -n argocd"
+        echo ""
+        echo "📈 To access Grafana (default: admin/admin123):"
+        echo "kubectl get svc prometheus-grafana -n monitoring"
+        echo ""
+        echo "🚀 Next Steps:"
+        echo "Run the CI workflow and add helm chart to ArgoCD"
+
 
 
 
