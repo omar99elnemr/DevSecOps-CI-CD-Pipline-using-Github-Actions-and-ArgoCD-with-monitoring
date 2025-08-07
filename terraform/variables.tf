@@ -29,3 +29,9 @@ variable "grafana_admin_password" {
   default     = "admin123"
   sensitive   = true
 }
+
+variable "create_oidc_provider" {
+  description = "Whether to create OIDC provider (disable for AWS Academy)"
+  type        = bool
+  default     = false
+}
