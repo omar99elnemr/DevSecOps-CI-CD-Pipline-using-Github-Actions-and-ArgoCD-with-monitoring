@@ -55,7 +55,7 @@ jobs:
         uses: warchant/setup-sonar-scanner@v8
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarcloud-github-action@main
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -103,7 +103,7 @@ jobs:
         uses: warchant/setup-sonar-scanner@v8
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarcloud-github-action@main
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
