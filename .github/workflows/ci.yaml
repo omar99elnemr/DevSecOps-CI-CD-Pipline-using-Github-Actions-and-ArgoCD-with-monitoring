@@ -1,7 +1,21 @@
-name: React.js CI
+name: DevSecOps CI
 
 on:
+  # push:
+  #   branches: [ main ]
+  #   paths:
+  #     - 'quiz-app/**'
+  #     - 'backend/**'
+  # pull_request:
+  #   branches: [ main ]
+  #   paths:
+  #     - 'quiz-app/**'
+  #     - 'backend/**'
   workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
 jobs: 
   frontend-test:
@@ -19,9 +33,11 @@ jobs:
 
       - name: USE NODEJS ${{ matrix.node-version }} - ${{ matrix.architecture }}
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          architecture: ${{ matrix.architecture }}
 
       - name: Install project dependencies 
-        working-directory: ./quiz-app
         run: |
           npm i
           npm run lint
@@ -33,7 +49,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        working-directory: ./quiz-app
 
               # Setup sonar-scanner
       - name: Setup SonarQube
@@ -69,9 +84,11 @@ jobs:
 
       - name: USE NODEJS ${{ matrix.node-version }} - ${{ matrix.architecture }}
         uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          architecture: ${{ matrix.architecture }}
 
       - name: Install project dependencies 
-        working-directory: ./backend
         run: |
           npm i
           npm run lint
@@ -108,7 +125,7 @@ jobs:
       run:
         working-directory: ./quiz-app
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@main
         continue-on-error: true # To make sure that SARIF upload gets called
@@ -136,7 +153,7 @@ jobs:
       run:
         working-directory: ./backend
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@main
         continue-on-error: true # To make sure that SARIF upload gets called
@@ -164,20 +181,35 @@ jobs:
       contents: read 
       security-events: write 
       actions: read
+    outputs:
+      image-tag: ${{ steps.build.outputs.image-tag }}
     steps:
     - uses: actions/checkout@v4
     
-    - name: Build and push backend Docker image
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and push frontend Docker image
+      id: build
       working-directory: ./quiz-app
       run: |
-        docker build . -t ${{ secrets.DOCKER_USERNAME }}/frontend-js
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin 
-        docker push ${{ secrets.DOCKER_USERNAME }}/frontend-js    
+        IMAGE_TAG=${GITHUB_SHA:0:8}
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        docker build . -t $ECR_REGISTRY/frontend-js:$IMAGE_TAG
+        docker push $ECR_REGISTRY/frontend-js:$IMAGE_TAG
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@main
       with:
-        image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/frontend-js'
+        image-ref: '${{ env.ECR_REGISTRY }}/frontend-js:${{ steps.build.outputs.image-tag }}'
         format: 'sarif'
         output: 'trivy-results.sarif'
         severity: 'CRITICAL,HIGH'
@@ -191,13 +223,12 @@ jobs:
       run: snyk auth ${{ secrets.SNYK_TOKEN }}
   
     - name: Snyk Container monitor
-      run: snyk container monitor ${{ secrets.DOCKER_USERNAME }}/frontend-js --file=Dockerfile   
-      working-directory: ./quiz-app
+      run: snyk container monitor $ECR_REGISTRY/frontend-js:${{ steps.build.outputs.image-tag }} --file=Dockerfile
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
       uses: snyk/actions/docker@main
       with:
-        image: ${{ secrets.DOCKER_USERNAME }}/frontend-js
+        image: ${{ env.ECR_REGISTRY }}/frontend-js:${{ steps.build.outputs.image-tag }}
         args: --file=quiz-app/Dockerfile --severity-threshold=high
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -212,20 +243,35 @@ jobs:
       contents: read 
       security-events: write 
       actions: read
+    outputs:
+      image-tag: ${{ steps.build.outputs.image-tag }}
     steps:
     - uses: actions/checkout@v4
     
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
     - name: Build and push backend Docker image
+      id: build
       working-directory: ./backend
       run: |
-        docker build . -t ${{ secrets.DOCKER_USERNAME }}/backend-api
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin 
-        docker push ${{ secrets.DOCKER_USERNAME }}/backend-api    
+        IMAGE_TAG=${GITHUB_SHA:0:8}
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        docker build . -t $ECR_REGISTRY/backend-api:$IMAGE_TAG
+        docker push $ECR_REGISTRY/backend-api:$IMAGE_TAG
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@main
       with:
-        image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/backend-api'
+        image-ref: '${{ env.ECR_REGISTRY }}/backend-api:${{ steps.build.outputs.image-tag }}'
         format: 'sarif'
         output: 'trivy-results.sarif'
         severity: 'CRITICAL,HIGH' 
@@ -239,28 +285,60 @@ jobs:
       run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
     - name: Snyk Container monitor
-      run: snyk container monitor ${{ secrets.DOCKER_USERNAME }}/backend-api --file=Dockerfile   
-      working-directory: ./backend
+      run: snyk container monitor $ECR_REGISTRY/backend-api:${{ steps.build.outputs.image-tag }} --file=Dockerfile
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
       uses: snyk/actions/docker@main
       with:
-        image: ${{ secrets.DOCKER_USERNAME }}/backend-api
+        image: ${{ env.ECR_REGISTRY }}/backend-api:${{ steps.build.outputs.image-tag }}
         args: --file=backend/Dockerfile --severity-threshold=high
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       continue-on-error: true 
 
 
-  k8s-manifest-scan:
+  helm-chart-scan:
     needs: [backend-security, frontend-security]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Snyk to check Kubernetes manifest file for issues
+      - name: Run Snyk to check Helm chart for issues
         uses: snyk/actions/iac@main
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: kubernetes-manifest/
+          file: helm/quiz-app/
           args: --severity-threshold=high
+
+  update-helm-values:
+    needs: [frontend-image, backend-image]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Update Helm values with new image tags
+        run: |
+          FRONTEND_TAG="${{ needs.frontend-image.outputs.image-tag }}"
+          BACKEND_TAG="${{ needs.backend-image.outputs.image-tag }}"
+          
+          # Update imageRegistry to use proper ECR registry (only if not already updated)
+          if grep -q "ACCOUNT_ID" helm/quiz-app/values.yaml; then
+            sed -i "s/ACCOUNT_ID/${{ secrets.AWS_ACCOUNT_ID }}/" helm/quiz-app/values.yaml
+          fi
+          
+          # Update frontend image tag (in frontend section)
+          sed -i "/^frontend:/,/^backend:/ s/tag: .*/tag: $FRONTEND_TAG/" helm/quiz-app/values.yaml
+          
+          # Update backend image tag (in backend section)  
+          sed -i "/^backend:/,/^database:/ s/tag: .*/tag: $BACKEND_TAG/" helm/quiz-app/values.yaml
+          
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add helm/quiz-app/values.yaml
+          git commit -m "Update image tags: frontend-${{ needs.frontend-image.outputs.image-tag }}, backend-${{ needs.backend-image.outputs.image-tag }}" || exit 0
+          git push
