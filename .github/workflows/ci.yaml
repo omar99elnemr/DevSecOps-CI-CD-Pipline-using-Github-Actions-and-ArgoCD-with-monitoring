@@ -225,6 +225,7 @@ jobs:
   
     - name: Snyk Container monitor
       run: snyk container monitor $ECR_REGISTRY/frontend-js:${{ steps.build.outputs.image-tag }} --file=Dockerfile
+      continue-on-error: true
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
       uses: snyk/actions/docker@master
@@ -288,6 +289,7 @@ jobs:
 
     - name: Snyk Container monitor
       run: snyk container monitor $ECR_REGISTRY/backend-api:${{ steps.build.outputs.image-tag }} --file=Dockerfile
+      continue-on-error: true
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
       uses: snyk/actions/docker@master
