@@ -322,14 +322,14 @@ jobs:
             --set backend.image.repository=placeholder \
             --set backend.image.tag=placeholder \
             --set database.password=placeholder \
-            --output-dir /tmp/helm-rendered
+            --output-dir ./helm-rendered
             
       - name: Run Snyk IaC security scan
         uses: snyk/actions/iac@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: /tmp/helm-rendered/
+          file: ./helm-rendered/
           args: --severity-threshold=high
 
   update-helm-values:
