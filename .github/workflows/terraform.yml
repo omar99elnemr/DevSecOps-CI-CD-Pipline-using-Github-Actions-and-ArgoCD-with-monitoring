@@ -110,8 +110,3 @@ jobs:
         echo ""
         echo "🚀 Next Steps:"
         echo "Run the CI workflow and add helm chart to ArgoCD"
-
-
-
-
-        

@@ -127,13 +127,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@main
+        uses: snyk/actions/node@master
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           
       - name: Install Snyk CLI
-        uses: snyk/actions/setup@main
+        uses: snyk/actions/setup@master
         with:
           version: latest
         env:
@@ -155,13 +155,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@main
+        uses: snyk/actions/node@master
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
          
       - name: Install Snyk CLI
-        uses: snyk/actions/setup@main
+        uses: snyk/actions/setup@master
         with:
           version: latest
         env:
@@ -216,7 +216,7 @@ jobs:
         severity: 'CRITICAL,HIGH'
 
     - name: Install Snyk CLI
-      uses: snyk/actions/setup@main
+      uses: snyk/actions/setup@master
       with:
         snyk-token: ${{ secrets.SNYK_TOKEN }}
        
@@ -227,7 +227,7 @@ jobs:
       run: snyk container monitor $ECR_REGISTRY/frontend-js:${{ steps.build.outputs.image-tag }} --file=Dockerfile
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
-      uses: snyk/actions/docker@main
+      uses: snyk/actions/docker@master
       with:
         image: ${{ env.ECR_REGISTRY }}/frontend-js:${{ steps.build.outputs.image-tag }}
         args: --file=quiz-app/Dockerfile --severity-threshold=high
@@ -279,7 +279,7 @@ jobs:
         severity: 'CRITICAL,HIGH' 
         
     - name: Install Snyk CLI
-      uses: snyk/actions/setup@main
+      uses: snyk/actions/setup@master
       with:
         snyk-token: ${{ secrets.SNYK_TOKEN }}
      
@@ -290,7 +290,7 @@ jobs:
       run: snyk container monitor $ECR_REGISTRY/backend-api:${{ steps.build.outputs.image-tag }} --file=Dockerfile
 
     - name: Run Snyk to check for vulnerabilities in the Docker image
-      uses: snyk/actions/docker@main
+      uses: snyk/actions/docker@master
       with:
         image: ${{ env.ECR_REGISTRY }}/backend-api:${{ steps.build.outputs.image-tag }}
         args: --file=backend/Dockerfile --severity-threshold=high
@@ -305,7 +305,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run Snyk to check Helm chart for issues
-        uses: snyk/actions/iac@main
+        uses: snyk/actions/iac@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
