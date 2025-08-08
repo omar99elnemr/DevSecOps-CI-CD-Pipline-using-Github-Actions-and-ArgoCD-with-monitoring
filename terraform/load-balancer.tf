@@ -1,11 +1,6 @@
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}
 
-# Use existing LabRole instead of creating new IAM role
-data "aws_iam_role" "lab_role" {
-  name = "LabRole"
-}
-
 # Use existing IAM policy instead of creating new one
 data "aws_iam_policy" "aws_load_balancer_controller" {
   name = "${var.cluster_name}-AWSLoadBalancerControllerIAMPolicy"
