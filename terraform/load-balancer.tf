@@ -1,10 +1,6 @@
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}
 
-# Use existing IAM policy instead of creating new one
-data "aws_iam_policy" "aws_load_balancer_controller" {
-  name = "${var.cluster_name}-AWSLoadBalancerControllerIAMPolicy"
-}
 # Install AWS Load Balancer Controller via Helm using existing LabRole
 resource "helm_release" "aws_load_balancer_controller" {
   name       = "aws-load-balancer-controller"
@@ -58,10 +54,9 @@ resource "helm_release" "aws_load_balancer_controller" {
 output "load_balancer_controller_info" {
   description = "AWS Load Balancer Controller deployment information"
   value = {
-    status = "Deployed using existing LabRole and existing policy"
+    status = "Deployed using existing LabRole"
     service_account = "aws-load-balancer-controller"
     role_arn = data.aws_iam_role.lab_role.arn
-    policy_arn = data.aws_iam_policy.aws_load_balancer_controller.arn
     namespace = "kube-system"
     note = "ALB and NLB ingress resources can now be created"
   }
