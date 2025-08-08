@@ -39,15 +39,15 @@ resource "helm_release" "argocd" {
       }
       configs = {
         secret = {
-          argocdServerAdminPassword = bcrypt(var.argocd_admin_password)
+          argocdServerAdminPassword = var.argocd_admin_password
         }
       }
     })
   ]
   
   depends_on = [
-    kubernetes_namespace.argocd,
     aws_eks_node_group.main,
+    kubernetes_namespace.argocd,
     helm_release.aws_load_balancer_controller
   ]
 }
