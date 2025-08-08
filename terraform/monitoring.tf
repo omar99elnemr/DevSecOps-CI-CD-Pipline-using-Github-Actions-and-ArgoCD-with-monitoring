@@ -22,7 +22,7 @@ resource "helm_release" "argocd" {
   namespace  = kubernetes_namespace.argocd.metadata[0].name
   version    = "5.46.8"
   
-  timeout = 900
+  timeout = 600  # 10 minutes
   wait    = true
   
   values = [
@@ -60,7 +60,7 @@ resource "helm_release" "prometheus" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   version    = "55.5.0"
   
-  timeout = 1200
+  timeout = 900  # 15 minutes
   wait    = true
   
   values = [
