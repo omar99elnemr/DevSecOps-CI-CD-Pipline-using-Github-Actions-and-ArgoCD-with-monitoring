@@ -47,6 +47,7 @@ resource "helm_release" "argocd" {
   
   depends_on = [
     kubernetes_namespace.argocd,
+    aws_eks_node_group.main,
     helm_release.aws_load_balancer_controller
   ]
 }
@@ -104,6 +105,7 @@ resource "helm_release" "prometheus" {
   
   depends_on = [
     kubernetes_namespace.monitoring,
+    aws_eks_node_group.main,
     helm_release.aws_load_balancer_controller
   ]
 }
