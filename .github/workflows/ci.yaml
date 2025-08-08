@@ -335,10 +335,14 @@ jobs:
   update-helm-values:
     needs: [frontend-image, backend-image]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow pushing changes
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
           
       - name: Update Helm values with new image tags
         run: |
@@ -360,6 +364,13 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Check if there are changes to commit
+          if git diff --quiet helm/quiz-app/values.yaml; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
           git add helm/quiz-app/values.yaml
-          git commit -m "Update image tags: frontend-${{ needs.frontend-image.outputs.image-tag }}, backend-${{ needs.backend-image.outputs.image-tag }}" || exit 0
+          git commit -m "Update image tags: frontend-${{ needs.frontend-image.outputs.image-tag }}, backend-${{ needs.backend-image.outputs.image-tag }}"
           git push
