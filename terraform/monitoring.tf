@@ -20,20 +20,22 @@ resource "helm_release" "argocd" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   namespace  = kubernetes_namespace.argocd.metadata[0].name
+  version    = "5.46.8"
+  
+  timeout = 900
+  wait    = true
   
   values = [
     yamlencode({
       server = {
         service = {
           type = "LoadBalancer"
-          # annotations = {
-          #   "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-          #   "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-          # }
+          annotations = {
+            "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
+            "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
+          }
         }
-        extraArgs = [
-          "--insecure"
-        ]
+        extraArgs = ["--insecure"]
       }
       configs = {
         secret = {
@@ -55,53 +57,46 @@ resource "helm_release" "prometheus" {
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
+  version    = "55.5.0"
+  
+  timeout = 1200
+  wait    = true
   
   values = [
     yamlencode({
       prometheus = {
         service = {
           type = "LoadBalancer"
-          # annotations = {
-          #   "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-          #   "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-          # }
+          annotations = {
+            "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
+            "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
+          }
         }
         prometheusSpec = {
-          retention = "7d"  # Reduce retention for cost savings
-          storageSpec = {
-            volumeClaimTemplate = {
-              spec = {
-                storageClassName = "gp2"
-                accessModes = ["ReadWriteOnce"]
-                resources = {
-                  requests = {
-                    storage = "10Gi"  # Reduced storage size
-                  }
-                }
-              }
-            }
-          }
+          retention = "2d"
+          storageSpec = {}  # No persistent storage - ephemeral only
         }
       }
       grafana = {
         service = {
           type = "LoadBalancer"
-          # annotations = {
-          #   "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-          #   "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-          # }
+          annotations = {
+            "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
+            "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
+          }
         }
         adminUser = var.grafana_admin_username
         adminPassword = var.grafana_admin_password
         persistence = {
-          enabled = true
-          storageClassName = "gp2"
-          size = "3Gi"  # Reduced Grafana storage
+          enabled = false  # No storage needed for short-term use
         }
       }
       alertmanager = {
         service = {
           type = "ClusterIP"
+        }
+        alertmanagerSpec = {
+          storage = {}  # No persistent storage
         }
       }
     })
