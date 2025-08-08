@@ -208,7 +208,7 @@ jobs:
         docker push $ECR_REGISTRY/frontend-js:$IMAGE_TAG
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@main
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         image-ref: '${{ env.ECR_REGISTRY }}/frontend-js:${{ steps.build.outputs.image-tag }}'
         format: 'sarif'
@@ -271,7 +271,7 @@ jobs:
         docker push $ECR_REGISTRY/backend-api:$IMAGE_TAG
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@main
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         image-ref: '${{ env.ECR_REGISTRY }}/backend-api:${{ steps.build.outputs.image-tag }}'
         format: 'sarif'
