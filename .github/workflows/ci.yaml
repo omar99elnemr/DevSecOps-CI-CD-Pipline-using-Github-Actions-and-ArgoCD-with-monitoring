@@ -304,12 +304,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Snyk to check Helm chart for issues
+      
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: '3.12.0'
+          
+      - name: Render and scan Helm chart
+        run: |
+          # Render Helm templates with placeholder values
+          helm template quiz-app helm/quiz-app/ \
+            --set imageRegistry=123456789012.dkr.ecr.us-east-1.amazonaws.com \
+            --set frontend.image.repository=placeholder \
+            --set frontend.image.tag=placeholder \
+            --set backend.image.repository=placeholder \
+            --set backend.image.tag=placeholder \
+            --set database.password=placeholder \
+            --output-dir /tmp/helm-rendered
+            
+      - name: Run Snyk IaC security scan
         uses: snyk/actions/iac@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: helm/quiz-app/
+          file: /tmp/helm-rendered/
           args: --severity-threshold=high
 
   update-helm-values:
