@@ -5,12 +5,17 @@ then push it
 
 you then recommended to havve the following tools on your machine
 1- awscli
+2- kubectl
+3- helm
 2- terraform
 
 you need to create a S3 bucket for the remote state of terraform
 eaither through console or through the cli
 and note down the bucket name
 
+
+
+For CLI make sure you 
 Here are  Required GitHub Secrets:
 AWS_ACCESS_KEY_ID           # AWS access key for ECR and Terraform
 AWS_SECRET_ACCESS_KEY       # AWS secret key for ECR and Terraform  
@@ -30,6 +35,59 @@ An EKS cluster with ArgoCD, Prometheus, Grafana and AWS loadbalancer Controller 
 
 ![alt text](image.png)
 
+## Resource Management & Cost Control
+
+### AWS Resource Group (Similar to Azure Resource Groups)
+This project creates **one comprehensive AWS Resource Group** to organize and manage all resources:
+
+**Resource Group**: `{cluster-name}-infrastructure` - Contains ALL provisioned resources
+
+### How to View Your Resources:
+```bash
+# View all resources in your infrastructure group
+aws resource-groups list-group-resources --group-name {cluster-name}-infrastructure
+
+# View resources in AWS Console
+# Go to: AWS Console > Resource Groups > Saved Groups > {cluster-name}-infrastructure
+```
+
+### How to Destroy All Resources:
+
+#### Option 1: Terraform Destroy (Recommended)
+```bash
+cd terraform/
+terraform destroy
+# Type 'yes' when prompted
+```
+
+#### Option 2: AWS Console Resource Groups
+1. Go to AWS Console > Resource Groups
+2. Select your resource group: `{cluster-name}-infrastructure`
+3. View all resources and manually delete them
+4. **Note**: This is more complex and may miss some resources
+
+#### Option 3: AWS CLI with Resource Groups
+```bash
+# List all resources first
+aws resource-groups list-group-resources --group-name {cluster-name}-infrastructure
+
+# Delete resources individually (complex, not recommended)
+```
+
+### Cost Monitoring:
+- Use AWS Cost Explorer with tag filter: `Project=DevSecOps-CI-CD-Pipeline`
+- Monitor costs by resource groups in AWS Console
+- Set up billing alerts for your project tag
+
+### Cost Optimizations Applied:
+- ✅ No NAT Gateway (~$45/month saved)
+- ✅ Public subnets only with security groups
+- ✅ Disabled EKS CloudWatch logging (~$10-20/month saved)
+- ✅ Disabled AlertManager (~$5-10/month saved)
+- ✅ Simplified monitoring configuration
+- ✅ **Total estimated savings: $60-80/month**
+
+## S3 Bucket for Terraform State:
 ```
 aws s3api create-bucket \
   --bucket quizapp00state00bucket \

@@ -106,8 +106,21 @@ variable "common_tags" {
   description = "Common tags to be applied to all resources"
   type        = map(string)
   default = {
-    Project     = "QuizApp"
-    Environment = "dev"
+    Project     = "quizapp"
+    Environment = "development"
     ManagedBy   = "Terraform"
+    Owner       = "DevOps-Team"
   }
+}
+
+variable "project_name" {
+  description = "Name of the project for resource grouping and tagging"
+  type        = string
+  default     = "quizapp"
+}
+
+variable "environment" {
+  description = "Environment name (dev, staging, prod)"
+  type        = string
+  default     = "development"
 }
