@@ -156,6 +156,8 @@ resource "aws_eks_node_group" "main" {
 
   capacity_type  = "ON_DEMAND"
   instance_types = [var.node_instance_type]
+  ami_type       = "AL2_x86_64"
+  disk_size      = var.node_disk_size
 
   scaling_config {
     desired_size = var.node_group_desired_size

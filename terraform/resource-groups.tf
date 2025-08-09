@@ -1,7 +1,7 @@
 # AWS Resource Group for all DevSecOps infrastructure
 resource "aws_resourcegroups_group" "quizapp_rg" {
   name        = "quizapp_rg"
-  description = "All resources for DevSecOps CI/CD Pipeline with EKS, ArgoCD, Prometheus, and Grafana"
+  description = "All resources for DevSecOps CI-CD Pipeline with EKS ArgoCD Prometheus and Grafana"
 
   resource_query {
     query = jsonencode({
