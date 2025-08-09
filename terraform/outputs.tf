@@ -29,8 +29,8 @@ output "ecr_login_command" {
 output "service_urls_commands" {
   description = "Commands to get service URLs"
   value = {
-    argocd = "kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
-    grafana = "kubectl get svc prometheus-grafana -n monitoring -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
+    argocd     = "kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
+    grafana    = "kubectl get svc prometheus-grafana -n monitoring -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
     prometheus = "kubectl get svc prometheus-kube-prometheus-prometheus -n monitoring -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
   }
 }
@@ -38,8 +38,8 @@ output "service_urls_commands" {
 output "credentials" {
   description = "Default credentials"
   value = {
-    argocd_username = "admin"
-    argocd_password = var.argocd_admin_password
+    argocd_username  = "admin"
+    argocd_password  = var.argocd_admin_password
     grafana_username = var.grafana_admin_username
     grafana_password = var.grafana_admin_password
   }

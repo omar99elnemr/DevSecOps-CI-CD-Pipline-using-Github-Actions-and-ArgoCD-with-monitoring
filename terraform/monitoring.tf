@@ -21,30 +21,22 @@ resource "helm_release" "argocd" {
   chart      = "argo-cd"
   namespace  = kubernetes_namespace.argocd.metadata[0].name
   version    = "5.46.8"
-  
-  timeout = 600  # 10 minutes
-  wait    = true
-  
-  values = [
-    yamlencode({
-      server = {
-        service = {
-          type = "LoadBalancer"
-          annotations = {
-            "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-            "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-          }
-        }
-        extraArgs = ["--insecure"]
-      }
-      configs = {
-        secret = {
-          argocdServerAdminPassword = var.argocd_admin_password
-        }
-      }
-    })
-  ]
-  
+
+  set {
+    name  = "server.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "server.extraArgs[0]"
+    value = "--insecure"
+  }
+
+  set {
+    name  = "configs.secret.argocdServerAdminPassword"
+    value = var.argocd_admin_password
+  }
+
   depends_on = [
     aws_eks_node_group.main,
     kubernetes_namespace.argocd,
@@ -59,50 +51,33 @@ resource "helm_release" "prometheus" {
   chart      = "kube-prometheus-stack"
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   version    = "55.5.0"
-  
-  timeout = 900  # 15 minutes
-  wait    = true
-  
-  values = [
-    yamlencode({
-      prometheus = {
-        service = {
-          type = "LoadBalancer"
-          annotations = {
-            "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-            "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-          }
-        }
-        prometheusSpec = {
-          retention = "2d"
-          storageSpec = {}  # No persistent storage - ephemeral only
-        }
-      }
-      grafana = {
-        service = {
-          type = "LoadBalancer"
-          annotations = {
-            "service.beta.kubernetes.io/aws-load-balancer-type" = "nlb"
-            "service.beta.kubernetes.io/aws-load-balancer-scheme" = "internet-facing"
-          }
-        }
-        adminUser = var.grafana_admin_username
-        adminPassword = var.grafana_admin_password
-        persistence = {
-          enabled = false  # No storage needed for short-term use
-        }
-      }
-      alertmanager = {
-        service = {
-          type = "ClusterIP"
-        }
-        alertmanagerSpec = {
-          storage = {}  # No persistent storage
-        }
-      }
-    })
-  ]
-  
+
+  set {
+    name  = "prometheus.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "grafana.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "grafana.adminUser"
+    value = var.grafana_admin_username
+  }
+
+  set {
+    name  = "grafana.adminPassword"
+    value = var.grafana_admin_password
+  }
+
+  # Disable AlertManager to save costs
+  set {
+    name  = "alertmanager.enabled"
+    value = "false"
+  }
+
   depends_on = [
     kubernetes_namespace.monitoring,
     aws_eks_node_group.main,
