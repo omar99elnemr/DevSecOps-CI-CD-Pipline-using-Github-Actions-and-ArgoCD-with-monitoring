@@ -28,6 +28,33 @@ SONAR_PROJECT_KEY         # SonarCloud project key
 SONAR_URL                 # SonarCloud URL (usually https://sonarcloud.io)
 GITHUB_TOKEN              # Automatically provided by GitHub Actions
 
+Create IAM user With admin attached policy.
+Take use access keys you get under access tab save them for use.
+AWS_ACCESS_KEY_ID           # AWS access key for ECR and Terraform
+AWS_SECRET_ACCESS_KEY       # AWS secret key for ECR and Terraform  
+Also copy your Acount ID you can find it on the to right  of console
+AWS_ACCOUNT_ID              # Your AWS account ID (for ECR registry URL)
+
+Next Is the Terraform state bucket on s3:
+You can either create it using console.
+or after configuring your awscli with IAM access keys, you can use this command:
+
+```
+BUCKET_NAME="quizapp00tfstate00bucket"
+aws s3api create-bucket \
+    --bucket "$BUCKET_NAME" \
+    --region us-east-1
+
+#oprional
+aws s3api put-bucket-versioning \
+    --bucket "$BUCKET_NAME" \
+    --versioning-configuration Status=Enabled
+```
+
+then use the name of created bucket as secret
+BUCKET_TF_STATE            # S3 bucket name for storing Terraform state
+
+
 
 First run the IaC workflow
 It will provision 2 ecr repos Frontend image and backend Image

@@ -27,7 +27,7 @@ variable "node_group_desired_size" {
 variable "node_group_max_size" {
   description = "Maximum number of nodes in the EKS node group"
   type        = number
-  default     = 2 # Reduced for cost savings
+  default     = 2 
 }
 
 variable "node_group_min_size" {
@@ -39,7 +39,7 @@ variable "node_group_min_size" {
 variable "node_instance_type" {
   description = "EC2 instance type for EKS nodes"
   type        = string
-  default     = "t3.small" # Smaller instance for cost savings
+  default     = "t4g.large"
 }
 
 variable "node_disk_size" {
