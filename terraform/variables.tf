@@ -39,7 +39,7 @@ variable "node_group_min_size" {
 variable "node_instance_type" {
   description = "EC2 instance type for EKS nodes"
   type        = string
-  default     = "t4g.large"
+  default     = "t3.large" # Reliable x86 instance with good compatibility
 }
 
 variable "node_disk_size" {
