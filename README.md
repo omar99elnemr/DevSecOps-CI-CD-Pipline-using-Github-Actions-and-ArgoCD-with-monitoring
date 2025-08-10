@@ -92,7 +92,7 @@ Navigate to S3 service and create a bucket manually.
 3. Note down your AWS Account ID (top-right corner of AWS Console)
 ![alt text](./imgs/Screenshot%202025-08-09%20183045.png)
 
-<br>
+<br><br>
 
 ![alt text](./imgs/Screenshot%202025-08-09%20183112.png)
 
