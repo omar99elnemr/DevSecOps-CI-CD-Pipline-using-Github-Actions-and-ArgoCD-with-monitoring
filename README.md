@@ -91,7 +91,13 @@ Navigate to S3 service and create a bucket manually.
 2. Generate access keys from Security Credentials tab
 3. Note down your AWS Account ID (top-right corner of AWS Console)
 ![alt text](./imgs/Screenshot%202025-08-09%20183045.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-09%20183112.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-09%20183141.png)
 
 
@@ -100,6 +106,9 @@ Navigate to S3 service and create a bucket manually.
 2. Go to Account Settings → General → Auth Token
 3. Copy the token
 ![alt text](./imgs/Screenshot%202025-08-08%20014039.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20014115.png)
 
 #### SonarCloud Setup
@@ -109,11 +118,29 @@ Navigate to S3 service and create a bucket manually.
 4. Choose "GitHub Actions" as analysis method
 5. Copy the provided token and organization details
 ![alt text](./imgs/Screenshot%202025-08-08%20014338.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20014813.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20014912.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20015904.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20015919.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20015939.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-08%20020129.png)
 
 #### Adding Secrets to GitHub
@@ -151,10 +178,6 @@ Access Prometheus using the external IP provided in the workflow output.
   ![alt text](./imgs/312584681-38cfb038-d8af-42e8-96bd-5a19c4529202.png)
   - Nodes: `15759`
   ![alt text](./imgs/312584786-1f646754-cc07-4175-b5d0-da663fd1249a.png)
-  - Pods: `15760`
-  - API Server: `15761`
-  - CoreDNS: `15762`
-  - Prometheus: `19105`
 
 ### Step 3: ArgoCD Configuration
 
@@ -181,6 +204,9 @@ echo $ARGO_PWD
    - **Cluster URL**: https://kubernetes.default.svc
    - **Namespace**: Target namespace
 ![alt text](./imgs/Screenshot%202025-08-10%20154231.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-10%20154302.png)
 
 ### Step 4: Application Deployment
@@ -193,8 +219,17 @@ echo $ARGO_PWD
    - Update Helm values with new image tags
    - Trigger ArgoCD sync for deployment
 ![alt text](./imgs/ci.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-10%20154416.png)
+
+<br>
+
 ![alt text](./imgs/argo-healthy.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-10%20160347.png)
 
 ### Step 5: Domain Configuration (Optional)
@@ -204,7 +239,13 @@ echo $ARGO_PWD
 ![alt text](./imgs/Screenshot%202025-08-10%20114321.png)
 2. Create hosted zone in Route 53
 ![alt text](./imgs/Screenshot%202025-08-10%20114416.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-10%20114511.png)
+
+<br>
+
 ![alt text](./imgs/Screenshot%202025-08-10%20114603.png)
 3. Update nameservers at your domain provider
 ![alt text](./imgs/Screenshot%202025-08-10%20114715.png)
