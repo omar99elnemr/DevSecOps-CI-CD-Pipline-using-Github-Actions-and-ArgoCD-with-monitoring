@@ -13,7 +13,7 @@ frontend:
     port: 8080
     type: ClusterIP
   env:
-    apiUrl: "http://backend-api-service:3000/api/questions"
+    apiUrl: http://backend-api-service:3000/api/questions
 
 # Backend configuration
 backend:
@@ -31,7 +31,7 @@ database:
   name: mongodb
   image:
     repository: mongo
-    tag: "6.0"
+    tag: latest
   replicas: 1
   service:
     port: 27017
@@ -41,7 +41,7 @@ database:
 
 # MongoDB secret
 mongoSecret:
-  connectionString: "bW9uZ29kYjovL21vbmdvZGItc2VydmljZToyNzAxNy9xdWl6LWFwcA=="
+  connectionString: bW9uZ29kYjovL21vbmdvZGItc2VydmljZToyNzAxNy9xdWl6LWFwcA==
 
 # Ingress configuration
 ingress:
@@ -53,7 +53,7 @@ ingress:
   rules:
     - host: quizapp.omar-domain.com
       paths:
-        - path: /api
+        - path: /api/questions
           pathType: Prefix
           service: backend-api-service
           port: 3000
