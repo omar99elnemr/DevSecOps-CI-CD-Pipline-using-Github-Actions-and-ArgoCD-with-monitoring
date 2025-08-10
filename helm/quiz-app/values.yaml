@@ -36,8 +36,8 @@ database:
   service:
     port: 27017
     type: ClusterIP
-  storage:
-    size: 5Gi
+  # storage:
+  #   size: 5Gi
 
 # MongoDB secret
 mongoSecret:

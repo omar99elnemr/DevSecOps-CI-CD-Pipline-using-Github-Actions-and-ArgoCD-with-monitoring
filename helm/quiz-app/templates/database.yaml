@@ -59,8 +59,12 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: gp2
-  resources:
-    requests:
-      storage: {{ .Values.database.storage.size }}
+volumes:
+- name: mongo-storage
+  emptyDir: {}
+  
+  # storageClassName: gp2
+  # resources:
+  #   requests:
+  #     storage: {{ .Values.database.storage.size }}
 
