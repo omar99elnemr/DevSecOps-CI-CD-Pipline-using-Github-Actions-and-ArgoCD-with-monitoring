@@ -28,6 +28,16 @@ resource "helm_release" "argocd" {
   }
 
   set {
+    name  = "server.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
+    value = "internet-facing"
+  }
+
+  set {
+    name  = "server.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+    value = "classic"
+  }
+
+  set {
     name  = "server.extraArgs[0]"
     value = "--insecure"
   }
@@ -58,8 +68,28 @@ resource "helm_release" "prometheus" {
   }
 
   set {
+    name  = "prometheus.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
+    value = "internet-facing"
+  }
+
+  set {
+    name  = "prometheus.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+    value = "classic"
+  }
+
+  set {
     name  = "grafana.service.type"
     value = "LoadBalancer"
+  }
+
+  set {
+    name  = "grafana.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
+    value = "internet-facing"
+  }
+
+  set {
+    name  = "grafana.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+    value = "classic"
   }
 
   set {
