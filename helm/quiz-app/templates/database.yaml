@@ -59,6 +59,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: gp2
   resources:
     requests:
       storage: {{ .Values.database.storage.size }}
+
