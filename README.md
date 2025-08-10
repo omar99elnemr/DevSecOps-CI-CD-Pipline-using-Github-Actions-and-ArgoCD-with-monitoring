@@ -16,7 +16,7 @@ A complete DevSecOps pipeline for deploying a three-tier quiz application on AWS
 - **Frontend**: React.js quiz application
 - **Backend**: Node.js API server
 - **Database**: MongoDB for data persistence
-- **Container Registry**: Docker Hub for image storage
+- **Container Registry**: AWS ECR for image storage
 
 ### DevSecOps Pipeline
 - **CI/CD**: GitHub Actions workflows
@@ -90,17 +90,17 @@ Navigate to S3 service and create a bucket manually.
 1. Create IAM user with Admin policy attached
 2. Generate access keys from Security Credentials tab
 3. Note down your AWS Account ID (top-right corner of AWS Console)
-![alt text](./imgs/Screenshot 2025-08-09 183045.png)
-![alt text](./imgs/Screenshot 2025-08-09 183112.png)
-![alt text](./imgs/Screenshot 2025-08-09 183141.png)
+![alt text](./imgs/Screenshot%202025-08-09%20183045.png)
+![alt text](./imgs/Screenshot%202025-08-09%20183112.png)
+![alt text](./imgs/Screenshot%202025-08-09%20183141.png)
 
 
 #### Snyk Token
 1. Sign up at [Snyk](https://snyk.io)
 2. Go to Account Settings → General → Auth Token
 3. Copy the token
-![alt text](./imgs/Screenshot 2025-08-08 014039.png)
-![alt text](./imgs/Screenshot 2025-08-08 014115.png)
+![alt text](./imgs/Screenshot%202025-08-08%20014039.png)
+![alt text](./imgs/Screenshot%202025-08-08%20014115.png)
 
 #### SonarCloud Setup
 1. Sign up at [SonarCloud](https://sonarcloud.io)
@@ -108,19 +108,19 @@ Navigate to S3 service and create a bucket manually.
 3. Create new project and select "Previous version"
 4. Choose "GitHub Actions" as analysis method
 5. Copy the provided token and organization details
-![alt text](./imgs/Screenshot 2025-08-08 014338.png)
-![alt text](./imgs/Screenshot 2025-08-08 014813.png)
-![alt text](./imgs/Screenshot 2025-08-08 014912.png)
-![alt text](./imgs/Screenshot 2025-08-08 015904.png)
-![alt text](./imgs/Screenshot 2025-08-08 015919.png)
-![alt text](./imgs/Screenshot 2025-08-08 015939.png)
-![alt text](./imgs/Screenshot 2025-08-08 020129.png)
+![alt text](./imgs/Screenshot%202025-08-08%20014338.png)
+![alt text](./imgs/Screenshot%202025-08-08%20014813.png)
+![alt text](./imgs/Screenshot%202025-08-08%20014912.png)
+![alt text](./imgs/Screenshot%202025-08-08%20015904.png)
+![alt text](./imgs/Screenshot%202025-08-08%20015919.png)
+![alt text](./imgs/Screenshot%202025-08-08%20015939.png)
+![alt text](./imgs/Screenshot%202025-08-08%20020129.png)
 
 #### Adding Secrets to GitHub
 1. Navigate to your repository
 2. Go to Settings → Secrets and Variables → Actions
 3. Add all required secrets listed above
-![alt text](./imgs/Screenshot 2025-08-09 185946.png)
+![alt text](./imgs/Screenshot%202025-08-09%20185946.png)
 
 
 ## 📋 Deployment Steps
@@ -135,14 +135,14 @@ Navigate to S3 service and create a bucket manually.
 
 #### Prometheus
 Access Prometheus using the external IP provided in the workflow output.
-![alt text](./imgs/Screenshot 2025-08-10 120016.png)
+![alt text](./imgs/Screenshot%202025-08-10%20120016.png)
 
 #### Grafana
 - **Default Credentials**: Check workflow output for username/password
-![alt text](./imgs/Screenshot 2025-08-10 115912.png)
+![alt text](./imgs/Screenshot%202025-08-10%20115912.png)
 - **Dashboard Import**: Use ID `6417` for Kubernetes monitoring
 ![alt text](./imgs/312580938-bdbd0d13-639a-4a32-bfd1-f986f1d5f090.png)
-![alt text](./imgs/Screenshot 2025-08-10 154010.png)
+![alt text](./imgs/Screenshot%202025-08-10%20154010.png)
 
 - **Additional Dashboard IDs**:
   - Global View: `15757`
@@ -167,7 +167,7 @@ echo $ARGO_PWD
 
 #### Repository Configuration
 - Login to ArgoCD with username `admin` and the retrieved password
-![alt text](./imgs/Screenshot 2025-08-10 115250.png)
+![alt text](./imgs/Screenshot%202025-08-10%20115250.png)
 
 #### Application Creation
 1. Click "CREATE APPLICATION"
@@ -180,8 +180,8 @@ echo $ARGO_PWD
    - **Path**: Path to Helm charts
    - **Cluster URL**: https://kubernetes.default.svc
    - **Namespace**: Target namespace
-![alt text](./imgs/Screenshot 2025-08-10 154231.png)
-![alt text](./imgs/Screenshot 2025-08-10 154302.png)
+![alt text](./imgs/Screenshot%202025-08-10%20154231.png)
+![alt text](./imgs/Screenshot%202025-08-10%20154302.png)
 
 ### Step 4: Application Deployment
 1. Navigate to GitHub Actions in your repository
@@ -193,23 +193,23 @@ echo $ARGO_PWD
    - Update Helm values with new image tags
    - Trigger ArgoCD sync for deployment
 ![alt text](./imgs/ci.png)
-![alt text](./imgs/Screenshot 2025-08-10 154416.png)
+![alt text](./imgs/Screenshot%202025-08-10%20154416.png)
 ![alt text](./imgs/argo-healthy.png)
-![alt text](./imgs/Screenshot 2025-08-10 160347.png)
+![alt text](./imgs/Screenshot%202025-08-10%20160347.png)
 
 ### Step 5: Domain Configuration (Optional)
 
 #### Route 53 Setup
 1. Purchase domain from provider (e.g., Namecheap, GoDaddy)
-![alt text](./imgs/Screenshot 2025-08-10 114321.png)
+![alt text](./imgs/Screenshot%202025-08-10%20114321.png)
 2. Create hosted zone in Route 53
-![alt text](./imgs/Screenshot 2025-08-10 114416.png)
-![alt text](./imgs/Screenshot 2025-08-10 114511.png)
-![alt text](./imgs/Screenshot 2025-08-10 114603.png)
+![alt text](./imgs/Screenshot%202025-08-10%20114416.png)
+![alt text](./imgs/Screenshot%202025-08-10%20114511.png)
+![alt text](./imgs/Screenshot%202025-08-10%20114603.png)
 3. Update nameservers at your domain provider
-![alt text](./imgs/Screenshot 2025-08-10 114715.png)
+![alt text](./imgs/Screenshot%202025-08-10%20114715.png)
 4. Create A-record pointing to ALB DNS name
-![alt text](./imgs/Screenshot 2025-08-10 161915.png)
+![alt text](./imgs/Screenshot%202025-08-10%20161915.png)
 ![alt text](./imgs/record.png)
 
 ## Working app
