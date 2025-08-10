@@ -39,8 +39,8 @@ Before starting, ensure you have the following tools installed:
 
 ```bash
 # Clone the repository
-git clone <https://github.com/omar99elnemr/DevSecOps-CI-CD-Pipline-using-Github-Actions-and-ArgoCD-with-monitoring.git>
-cd <DevSecOps-CI-CD-Pipline-using-Github-Actions-and-ArgoCD-with-monitoring>
+git clone https://github.com/omar99elnemr/DevSecOps-CI-CD-Pipline-using-Github-Actions-and-ArgoCD-with-monitoring.git
+cd DevSecOps-CI-CD-Pipline-using-Github-Actions-and-ArgoCD-with-monitoring
 
 # Change origin to your own repository
 git remote set-url origin <your-repo-url>
@@ -262,6 +262,7 @@ To destroy all resources:
 1. Run the `terraform-destroy.yml` workflow from GitHub Actions
 ![alt text](./imgs/cleaanup.png)
 2. Verify all AWS resources are properly cleaned up
+
 
 
 **Note**: Ensure all secrets are properly configured before running any workflows. The deployment process may take 15-30 minutes depending on your AWS region and resource allocation.
