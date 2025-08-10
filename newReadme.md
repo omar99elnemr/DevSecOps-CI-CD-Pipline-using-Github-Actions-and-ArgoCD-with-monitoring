@@ -2,13 +2,13 @@
 
 A complete DevSecOps pipeline for deploying a three-tier quiz application on AWS using Kubernetes (EKS), Terraform for infrastructure provisioning, and ArgoCD for GitOps. This project demonstrates infrastructure as code, application deployment, security scanning, and comprehensive monitoring.
 
-![Architecture Diagram](diagram.gif)
+![alt text](imgs/architecture-.gif)
 
 ## 🏗️ Architecture Overview
 
 ### Infrastructure Layer (Terraform)
-- **AWS EKS Cluster**: Managed Kubernetes service (v1.29)
-- **VPC Configuration**: Custom VPC with CIDR `10.20.0.0/16`
+- **AWS EKS Cluster**: Managed Kubernetes service 
+- **VPC Configuration**: Custom VPC with CIDR 
 - **IAM Roles**: Secure permissions for EKS cluster and worker nodes
 - **Application Load Balancer**: Ingress traffic management
 
@@ -66,6 +66,7 @@ aws s3api put-bucket-versioning \
 
 **Option B: Using AWS Console**
 Navigate to S3 service and create a bucket manually.
+![Bucket](imgs/image.png)
 
 ## 🔐 Secrets Configuration
 
@@ -89,11 +90,17 @@ Navigate to S3 service and create a bucket manually.
 1. Create IAM user with Admin policy attached
 2. Generate access keys from Security Credentials tab
 3. Note down your AWS Account ID (top-right corner of AWS Console)
+![alt text](./imgs/Screenshot 2025-08-09 183045.png)
+![alt text](./imgs/Screenshot 2025-08-09 183112.png)
+![alt text](./imgs/Screenshot 2025-08-09 183141.png)
+
 
 #### Snyk Token
 1. Sign up at [Snyk](https://snyk.io)
 2. Go to Account Settings → General → Auth Token
 3. Copy the token
+![alt text](./imgs/Screenshot 2025-08-08 014039.png)
+![alt text](./imgs/Screenshot 2025-08-08 014115.png)
 
 #### SonarCloud Setup
 1. Sign up at [SonarCloud](https://sonarcloud.io)
@@ -101,11 +108,20 @@ Navigate to S3 service and create a bucket manually.
 3. Create new project and select "Previous version"
 4. Choose "GitHub Actions" as analysis method
 5. Copy the provided token and organization details
+![alt text](./imgs/Screenshot 2025-08-08 014338.png)
+![alt text](./imgs/Screenshot 2025-08-08 014813.png)
+![alt text](./imgs/Screenshot 2025-08-08 014912.png)
+![alt text](./imgs/Screenshot 2025-08-08 015904.png)
+![alt text](./imgs/Screenshot 2025-08-08 015919.png)
+![alt text](./imgs/Screenshot 2025-08-08 015939.png)
+![alt text](./imgs/Screenshot 2025-08-08 020129.png)
 
 #### Adding Secrets to GitHub
 1. Navigate to your repository
 2. Go to Settings → Secrets and Variables → Actions
 3. Add all required secrets listed above
+![alt text](./imgs/Screenshot 2025-08-09 185946.png)
+
 
 ## 📋 Deployment Steps
 
@@ -113,19 +129,28 @@ Navigate to S3 service and create a bucket manually.
 1. Review and modify Terraform variables and Helm values as needed
 2. Run the `terraform.yaml` workflow from GitHub Actions
 3. Wait for completion and note the cluster access details from workflow output
+![alt text](imgs/terraform-apply.png)
 
 ### Step 2: Monitoring Setup
 
 #### Prometheus
 Access Prometheus using the external IP provided in the workflow output.
+![alt text](./imgs/Screenshot 2025-08-10 120016.png)
 
 #### Grafana
 - **Default Credentials**: Check workflow output for username/password
+![alt text](./imgs/Screenshot 2025-08-10 115912.png)
 - **Dashboard Import**: Use ID `6417` for Kubernetes monitoring
+![alt text](./imgs/312580938-bdbd0d13-639a-4a32-bfd1-f986f1d5f090.png)
+![alt text](./imgs/Screenshot 2025-08-10 154010.png)
+
 - **Additional Dashboard IDs**:
   - Global View: `15757`
+  ![alt text](./imgs/312584310-f32673e0-c9d3-4fc2-8734-365e8c66465d.png)
   - Namespaces: `15758` 
+  ![alt text](./imgs/312584681-38cfb038-d8af-42e8-96bd-5a19c4529202.png)
   - Nodes: `15759`
+  ![alt text](./imgs/312584786-1f646754-cc07-4175-b5d0-da663fd1249a.png)
   - Pods: `15760`
   - API Server: `15761`
   - CoreDNS: `15762`
@@ -141,13 +166,12 @@ echo $ARGO_PWD
 ```
 
 #### Repository Configuration
-1. Login to ArgoCD with username `admin` and the retrieved password
-2. Go to Settings → Repositories
-3. Click "CONNECT REPO USING HTTPS"
-4. Add your application repository (provide GitHub token if private)
+- Login to ArgoCD with username `admin` and the retrieved password
+![alt text](./imgs/Screenshot 2025-08-10 115250.png)
 
 #### Application Creation
 1. Click "CREATE APPLICATION"
+![alt text](./imgs/argo-new.png)
 2. Configure application details:
    - **Application Name**: Choose a meaningful name
    - **Project**: default
@@ -156,6 +180,8 @@ echo $ARGO_PWD
    - **Path**: Path to Helm charts
    - **Cluster URL**: https://kubernetes.default.svc
    - **Namespace**: Target namespace
+![alt text](./imgs/Screenshot 2025-08-10 154231.png)
+![alt text](./imgs/Screenshot 2025-08-10 154302.png)
 
 ### Step 4: Application Deployment
 1. Navigate to GitHub Actions in your repository
@@ -166,37 +192,35 @@ echo $ARGO_PWD
    - Push images to ECR
    - Update Helm values with new image tags
    - Trigger ArgoCD sync for deployment
+![alt text](./imgs/ci.png)
+![alt text](./imgs/Screenshot 2025-08-10 154416.png)
+![alt text](./imgs/argo-healthy.png)
+![alt text](./imgs/Screenshot 2025-08-10 160347.png)
 
 ### Step 5: Domain Configuration (Optional)
 
 #### Route 53 Setup
 1. Purchase domain from provider (e.g., Namecheap, GoDaddy)
+![alt text](./imgs/Screenshot 2025-08-10 114321.png)
 2. Create hosted zone in Route 53
+![alt text](./imgs/Screenshot 2025-08-10 114416.png)
+![alt text](./imgs/Screenshot 2025-08-10 114511.png)
+![alt text](./imgs/Screenshot 2025-08-10 114603.png)
 3. Update nameservers at your domain provider
+![alt text](./imgs/Screenshot 2025-08-10 114715.png)
 4. Create A-record pointing to ALB DNS name
+![alt text](./imgs/Screenshot 2025-08-10 161915.png)
+![alt text](./imgs/record.png)
 
-## 🔍 Monitoring Dashboards
-
-Access your monitoring tools:
-- **Prometheus**: `http://<prometheus-external-ip>`
-- **Grafana**: `http://<grafana-external-ip>` (admin/password from workflow output)
-- **ArgoCD**: `http://<argocd-external-ip>` (admin/retrieved-password)
+## Working app
+![alt text](./imgs/website.png)
 
 ## 🧹 Cleanup
 
 To destroy all resources:
 1. Run the `terraform-destroy.yml` workflow from GitHub Actions
+![alt text](./imgs/cleaanup.png)
 2. Verify all AWS resources are properly cleaned up
-
-## 📁 Project Structure
-
-```
-├── terraform/              # Infrastructure as Code
-├── helm-charts/            # Kubernetes manifests and Helm charts  
-├── .github/workflows/      # GitHub Actions workflows
-├── src/                    # Application source code
-└── README.md              # This file
-```
 
 
 **Note**: Ensure all secrets are properly configured before running any workflows. The deployment process may take 15-30 minutes depending on your AWS region and resource allocation.
