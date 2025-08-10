@@ -1,45 +1,45 @@
 # Global settings
 namespace: quiz-app
-imageRegistry: "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com"
+imageRegistry: "116981779461.dkr.ecr.us-east-1.amazonaws.com"
 
 # Frontend configuration
 frontend:
   name: frontend
   image:
     repository: frontend-js
-    tag: latest
+    tag: 41682864
   replicas: 1
   service:
     port: 8080
-    type: ClusterIP  # Changed to ClusterIP for ALB Ingress
+    type: ClusterIP
   env:
-    apiUrl: "http://backend-api-service:3000//api/questions"
+    apiUrl: "http://backend-api-service:3000/api/questions"
 
 # Backend configuration
 backend:
   name: backend-api
   image:
     repository: backend-api
-    tag: latest
+    tag: 41682864
   replicas: 1
   service:
     port: 3000
-    type: ClusterIP  # Changed to ClusterIP for ALB Ingress
+    type: ClusterIP
 
 # Database configuration
 database:
   name: mongodb
   image:
     repository: mongo
-    tag: latest
+    tag: "6.0"
   replicas: 1
   service:
     port: 27017
-    type: ClusterIP  # Internal service, no external access needed
+    type: ClusterIP
   storage:
-    size: 5Gi  # Reduced MongoDB storage for cost savings
+    size: 5Gi
 
-# MongoDB secret (base64 encoded connection string)
+# MongoDB secret
 mongoSecret:
   connectionString: "bW9uZ29kYjovL21vbmdvZGItc2VydmljZToyNzAxNy9xdWl6LWFwcA=="
 
@@ -53,11 +53,11 @@ ingress:
   rules:
     - host: quizapp.omar-domain.com
       paths:
+        - path: /api
+          pathType: Prefix
+          service: backend-api-service
+          port: 3000
         - path: /
           pathType: Prefix
           service: frontend-service
           port: 8080
-        - path: /api/questions
-          pathType: Prefix
-          service: backend-api-service
-          port: 3000

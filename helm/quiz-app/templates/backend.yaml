@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: {{ .Values.backend.name }}
   namespace: {{ .Values.namespace }}
-  labels:
-    app: {{ .Values.backend.name }}
 spec:
   replicas: {{ .Values.backend.replicas }}
   selector:
@@ -26,13 +24,19 @@ spec:
             secretKeyRef:
               name: mongo-secret
               key: mongo-uri
+        readinessProbe:
+          httpGet:
+            path: /api/questions
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
         resources:
           requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "200m"
+          limits:
+            memory: "256Mi"
+            cpu: "1000m"
 ---
 apiVersion: v1
 kind: Service
@@ -43,7 +47,6 @@ spec:
   selector:
     app: {{ .Values.backend.name }}
   ports:
-    - protocol: TCP
-      port: {{ .Values.backend.service.port }}
+    - port: {{ .Values.backend.service.port }}
       targetPort: 3000
   type: {{ .Values.backend.service.type }}

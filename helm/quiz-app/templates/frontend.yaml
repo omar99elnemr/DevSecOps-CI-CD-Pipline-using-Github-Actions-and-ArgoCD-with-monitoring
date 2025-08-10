@@ -3,15 +3,8 @@ kind: Deployment
 metadata:
   name: {{ .Values.frontend.name }}
   namespace: {{ .Values.namespace }}
-  labels:
-    app: {{ .Values.frontend.name }}
 spec:
   replicas: {{ .Values.frontend.replicas }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 25%
   selector:
     matchLabels:
       app: {{ .Values.frontend.name }}
@@ -23,11 +16,24 @@ spec:
       containers:
       - name: {{ .Values.frontend.name }}
         image: {{ .Values.imageRegistry }}/{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
-        env:
-        - name: VITE_REACT_APP_API_URL
-          value: {{ .Values.frontend.env.apiUrl | quote }}
         ports:
         - containerPort: 8080
+        env:
+        - name: VITE_REACT_APP_API_URL
+          value: {{ .Values.frontend.env.apiUrl }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
@@ -40,5 +46,4 @@ spec:
   ports:
   - port: {{ .Values.frontend.service.port }}
     targetPort: 8080
-    protocol: TCP
   type: {{ .Values.frontend.service.type }}
