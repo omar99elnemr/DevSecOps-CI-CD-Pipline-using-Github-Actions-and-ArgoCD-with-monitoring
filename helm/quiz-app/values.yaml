@@ -7,7 +7,7 @@ frontend:
   name: frontend
   image:
     repository: frontend-js
-    tag: 41682864
+    tag: f23bdda0
   replicas: 1
   service:
     port: 8080
@@ -20,7 +20,7 @@ backend:
   name: backend-api
   image:
     repository: backend-api
-    tag: 41682864
+    tag: f23bdda0
   replicas: 1
   service:
     port: 3000
