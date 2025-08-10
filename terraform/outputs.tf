@@ -39,7 +39,7 @@ output "credentials" {
   description = "Default credentials"
   value = {
     argocd_username  = "admin"
-    argocd_password  = var.argocd_admin_password
+    # argocd_password  = var.argocd_admin_password
     grafana_username = var.grafana_admin_username
     grafana_password = var.grafana_admin_password
   }

@@ -96,7 +96,7 @@ jobs:
         echo "🎛️ Load Balancer Controller:"
         kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-load-balancer-controller
         echo ""
-        echo "⚖️ Load Balancers:"
+        echo "⚖️ Load Balancers (You need to wait for the LoadBalancer IPs to be ready):"
         kubectl get svc --all-namespaces --field-selector spec.type=LoadBalancer
         echo ""
         echo "🔑 Access Commands:"
