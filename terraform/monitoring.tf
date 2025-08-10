@@ -42,10 +42,10 @@ resource "helm_release" "argocd" {
     value = "--insecure"
   }
 
-  set {
-    name  = "configs.secret.argocdServerAdminPassword"
-    value = var.argocd_admin_password
-  }
+  # set {
+  #   name  = "configs.secret.argocdServerAdminPassword"
+  #   value = var.argocd_admin_password
+  # }
 
   depends_on = [
     aws_eks_node_group.main,

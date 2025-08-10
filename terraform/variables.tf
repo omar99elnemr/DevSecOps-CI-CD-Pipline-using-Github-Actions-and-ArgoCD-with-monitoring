@@ -75,12 +75,12 @@ variable "grafana_admin_password" {
   sensitive   = true
 }
 
-variable "argocd_admin_password" {
-  description = "ArgoCD admin password"
-  type        = string
-  default     = "admin123"
-  sensitive   = true
-}
+# variable "argocd_admin_password" {
+#   description = "ArgoCD admin password"
+#   type        = string
+#   default     = "admin123"
+#   sensitive   = true
+# }
 
 variable "git_repository_url" {
   description = "Git repository URL for ArgoCD applications"
