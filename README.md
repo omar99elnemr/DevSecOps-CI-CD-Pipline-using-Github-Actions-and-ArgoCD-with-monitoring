@@ -259,10 +259,15 @@ echo $ARGO_PWD
 ## 🧹 Cleanup
 
 To destroy all resources:
-1. Run the `terraform-destroy.yml` workflow from GitHub Actions
-![alt text](./imgs/cleaanup.png)
-2. Verify all AWS resources are properly cleaned up
 
+1. Run the `terraform-destroy.yml` workflow from **GitHub Actions**.  
+   ![Cleanup workflow screenshot](./imgs/cleanup.png)  
 
+2. If the cleanup workflow gets stuck, use the following order to manually destroy AWS resources:  
+   - **EKS Node Groups** → **EKS Cluster** → **VPC** *(must be in this exact order)*  
+   - Policies, IAM Roles, and ECR repositories can be deleted in any order.  
+
+3. Verify that all AWS resources have been properly removed.
 
 **Note**: Ensure all secrets are properly configured before running any workflows. The deployment process may take 15-30 minutes depending on your AWS region and resource allocation.
+
